@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"errors"
-	token_class "github.com/JeffThomas/lexx/token"
 	"unicode"
 )
 
@@ -13,7 +12,7 @@ func StartIntegerMatcher() func(r rune, currentText *string) MatcherResult {
 		if r == 0 {
 			if len(*currentText) > 0 {
 				return MatcherResult{
-					Token:      &token_class.Token{Type: token_class.INTEGER, Value: *currentText + "", Column: length},
+					Token:      &Token{Type: INTEGER, Value: *currentText + "", Column: length},
 					Err:        nil,
 					Precedence: 0,
 				}
@@ -41,7 +40,7 @@ func StartIntegerMatcher() func(r rune, currentText *string) MatcherResult {
 			}
 		} else {
 			return MatcherResult{
-				Token:      &token_class.Token{Type: token_class.INTEGER, Value: *currentText + "", Column: length},
+				Token:      &Token{Type: INTEGER, Value: *currentText + "", Column: length},
 				Err:        nil,
 				Precedence: 0,
 			}

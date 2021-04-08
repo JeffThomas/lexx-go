@@ -3,15 +3,14 @@ package lexx
 import (
 	"bufio"
 	matchers_class "github.com/JeffThomas/lexx/matchers"
-	token_class "github.com/JeffThomas/lexx/token"
 	"log"
 )
 
 type Lexx struct {
 	Input       *bufio.Reader
 	matchers    []func() func(r rune, currentText *string) matchers_class.MatcherResult
-	Token       *token_class.Token
-	NextToken   *token_class.Token
+	Token       *matchers_class.Token
+	NextToken   *matchers_class.Token
 	CurrentText string
 	cache       []rune
 	Line        int
@@ -53,7 +52,7 @@ func (lexx *Lexx) PushToken() {
 	lexx.Token = nil
 }
 
-func (lexx *Lexx) GetNextToken() (*token_class.Token, error) {
+func (lexx *Lexx) GetNextToken() (*matchers_class.Token, error) {
 	lexx.Token = nil
 
 	if lexx.NextToken != nil {
@@ -118,12 +117,12 @@ func (lexx *Lexx) GetNextToken() (*token_class.Token, error) {
 
 		if r == 0 {
 			if lexx.Token == nil {
-				lexx.Token = &token_class.Token{Type: token_class.SYSTEM, Value: "EOF"}
+				lexx.Token = &matchers_class.Token{Type: matchers_class.SYSTEM, Value: "EOF"}
 			}
 		}
 
 		currentLen := len(lexx.CurrentText)
-		if !isRunning && lexx.Token != nil && lexx.Token.Type != token_class.SYSTEM {
+		if !isRunning && lexx.Token != nil && lexx.Token.Type != matchers_class.SYSTEM {
 			tokenLen := len(lexx.Token.Value)
 			if tokenLen > 0 && tokenLen < currentLen {
 				cache := append([]rune(lexx.CurrentText)[tokenLen:currentLen], r)

@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	matchers_class "github.com/JeffThomas/lexx/matchers"
-	token_class "github.com/JeffThomas/lexx/token"
 	"log"
 	"os"
 	"testing"
@@ -81,7 +80,7 @@ func TestLexx_LoadFile(t *testing.T) {
 			break
 		}
 		totalCount++
-		if t.Type == token_class.WORD {
+		if t.Type == matchers_class.WORD {
 			//fmt.Printf("%s\n", t.value)
 			count, ok := wordsMap[t.Value]
 			if ok {
@@ -91,18 +90,18 @@ func TestLexx_LoadFile(t *testing.T) {
 			}
 			wordCount++
 			continue
-		} else if t.Type == token_class.INTEGER {
+		} else if t.Type == matchers_class.INTEGER {
 			//fmt.Printf("%s\n", t.value)
 			integerCount++
 			continue
-		} else if t.Type == token_class.FLOAT {
+		} else if t.Type == matchers_class.FLOAT {
 			//fmt.Printf("%s\n", t.value)
 			floatCount++
 			continue
-		} else if t.Type == token_class.WHITESPACE {
+		} else if t.Type == matchers_class.WHITESPACE {
 			// do nothing
 			continue
-		} else if t.Type == token_class.SYMBOL {
+		} else if t.Type == matchers_class.SYMBOL {
 			symbolCount++
 			continue
 		}

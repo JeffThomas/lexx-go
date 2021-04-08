@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"errors"
-	token_class "github.com/JeffThomas/lexx/token"
 )
 
 func InitSymbolMatcher(newSymbols []string) func() func(r rune, currentText *string) MatcherResult {
@@ -27,7 +26,7 @@ func InitSymbolMatcher(newSymbols []string) func() func(r rune, currentText *str
 			if r == 0 || symbolCount == 0 {
 				if found != "" {
 					return MatcherResult{
-						Token: &token_class.Token{Type: token_class.SYMBOL, Value: found, Column: runeCount},
+						Token: &Token{Type: SYMBOL, Value: found, Column: runeCount},
 						Err:   nil,
 					}
 				} else {

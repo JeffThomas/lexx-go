@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"errors"
-	token_class "github.com/JeffThomas/lexx/token"
 	"unicode"
 )
 
@@ -57,7 +56,7 @@ func InitKeywordMatcher(newKeywords []string) func() func(r rune, currentText *s
 				}
 				if found != "" {
 					return MatcherResult{
-						Token:      &token_class.Token{Type: token_class.KEYWORD, Value: found, Column: runeCount},
+						Token:      &Token{Type: KEYWORD, Value: found, Column: runeCount},
 						Err:        nil,
 						Precedence: 1,
 					}

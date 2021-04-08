@@ -2,7 +2,6 @@ package matchers
 
 import (
 	"errors"
-	token_class "github.com/JeffThomas/lexx/token"
 )
 
 func StartStringMatcher() func(r rune, currentText *string) MatcherResult {
@@ -39,7 +38,7 @@ func StartStringMatcher() func(r rune, currentText *string) MatcherResult {
 
 		if done {
 			return MatcherResult{
-				Token: &token_class.Token{Type: token_class.STRING, Value: *currentText + "", Column: length},
+				Token: &Token{Type: STRING, Value: *currentText + "", Column: length},
 				Err:   nil,
 			}
 		}
