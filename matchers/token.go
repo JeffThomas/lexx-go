@@ -36,3 +36,7 @@ type Token struct {
 	Line   int
 	Column int
 }
+
+func (t *Token) Equals(ot *Token) bool {
+	return t.Value == ot.Value && t.Type == ot.Type
+}
