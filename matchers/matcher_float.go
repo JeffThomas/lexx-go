@@ -1,67 +1,38 @@
 package matchers
 
 import (
-	"errors"
 	"unicode"
 )
 
-func StartFloatMatcher() func(r rune, currentText *string) MatcherResult {
+func StartFloatMatcher() LexxMatcherMatch {
 	length := 0
 	dot := -1
-	return func(r rune, currentText *string) MatcherResult {
+	return func(r rune, currentText []rune) (token *Token, precedence int8, run bool) {
 
 		if r == 0 {
-			if len(*currentText) > 0 && dot > -1 && length > dot {
-				return MatcherResult{
-					Token:      &Token{Type: FLOAT, Value: *currentText + "", Column: length},
-					Err:        nil,
-					Precedence: 0,
-				}
+			if length > 0 && dot > -1 && length > dot {
+				return &Token{Type: FLOAT, Value: string(currentText), Column: length}, 0, false
 			} else {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not a float"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 		}
 
 		if r == '.' {
 			if dot > -1 && length == dot {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not a float"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 			if dot == -1 {
 				dot = length
-				return MatcherResult{
-					Token:      nil,
-					Err:        nil,
-					Precedence: 0,
-				}
+				return nil, 0, true
 			}
 		}
 		if unicode.IsDigit(r) {
 			length++
-			return MatcherResult{
-				Token:      nil,
-				Err:        nil,
-				Precedence: 0,
-			}
-		} else if len(*currentText) == 0 || dot == -1 || dot == length {
-			return MatcherResult{
-				Token:      nil,
-				Err:        errors.New("not a float"),
-				Precedence: 0,
-			}
+			return nil, 0, true
+		} else if length == 0 || dot == -1 || dot == length {
+			return nil, 0, false
 		} else {
-			return MatcherResult{
-				Token:      &Token{Type: FLOAT, Value: *currentText + "", Column: length},
-				Err:        nil,
-				Precedence: 0,
-			}
+			return &Token{Type: FLOAT, Value: string(currentText), Column: length}, 0, false
 		}
 	}
 }

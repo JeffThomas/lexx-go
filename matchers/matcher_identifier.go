@@ -1,69 +1,41 @@
 package matchers
 
 import (
-	"errors"
 	"unicode"
 )
 
-func StartIdentifierMatcher() func(r rune, currentText *string) MatcherResult {
+func StartIdentifierMatcher() LexxMatcherMatch {
 	length := 0
-	return func(r rune, currentText *string) MatcherResult {
+	return func(r rune, currentText []rune) (token *Token, precedence int8, run bool) {
 
 		if length == 0 {
 			if unicode.IsDigit(r) {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not an identifier"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 
 			if r == '_' || unicode.IsLetter(r) {
 				length++
-				return MatcherResult{
-					Token:      nil,
-					Err:        nil,
-					Precedence: 0,
-				}
+				return nil, 0, true
 			}
 		}
 
 		if r == 0 {
-			if len(*currentText) > 0 {
-				return MatcherResult{
-					Token:      &Token{Type: IDENTIFIER, Value: *currentText + "", Column: length},
-					Err:        nil,
-					Precedence: 0,
-				}
+			if length > 0 {
+				return &Token{Type: IDENTIFIER, Value: string(currentText), Column: length}, 5, false
 			} else {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not an identifier"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 		}
 
 		if r == '_' || unicode.IsLetter(r) || unicode.IsDigit(r) {
 			length++
-			return MatcherResult{
-				Token:      nil,
-				Err:        nil,
-				Precedence: 0,
-			}
+			return nil, 0, true
 		}
 
-		if len(*currentText) > 0 {
-			return MatcherResult{
-				Token: &Token{Type: IDENTIFIER, Value: *currentText + "", Column: length},
-				Err:   nil,
-			}
+		if length > 0 {
+			return &Token{Type: IDENTIFIER, Value: string(currentText), Column: length}, 5, false
 		} else {
-			return MatcherResult{
-				Token:      nil,
-				Err:        errors.New("not an identifier"),
-				Precedence: 0,
-			}
+			return nil, 0, false
 		}
 	}
 }

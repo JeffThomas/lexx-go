@@ -1,12 +1,10 @@
 package matchers
 
 import (
-	"errors"
 	"unicode"
 )
 
-func InitKeywordMatcher(newKeywords []string) func() func(r rune, currentText *string) MatcherResult {
-
+func ConfigKeywordMatcher(newKeywords []string) LexxMatcherInitialize {
 	keywords := make([][]rune, len(newKeywords))
 	for i, keyword := range newKeywords {
 		keywords[i] = []rune(keyword)
@@ -14,7 +12,7 @@ func InitKeywordMatcher(newKeywords []string) func() func(r rune, currentText *s
 
 	current := make([][]rune, len(keywords))
 
-	return func() func(r rune, currentText *string) MatcherResult {
+	return func() LexxMatcherMatch {
 		runeCount := 0
 		found := ""
 		for i, keyword := range keywords {
@@ -23,7 +21,7 @@ func InitKeywordMatcher(newKeywords []string) func() func(r rune, currentText *s
 
 		keywordCount := len(current)
 
-		return func(r rune, currentText *string) MatcherResult {
+		return func(r rune, currentText []rune) (token *Token, precedence int8, run bool) {
 
 			if r != 0 {
 				for i, keyword := range current {
@@ -55,26 +53,14 @@ func InitKeywordMatcher(newKeywords []string) func() func(r rune, currentText *s
 					}
 				}
 				if found != "" {
-					return MatcherResult{
-						Token:      &Token{Type: KEYWORD, Value: found, Column: runeCount},
-						Err:        nil,
-						Precedence: 1,
-					}
+					return &Token{Type: KEYWORD, Value: found, Column: runeCount}, 10, false
 				} else {
-					return MatcherResult{
-						Token:      nil,
-						Err:        errors.New("not a keyword"),
-						Precedence: 0,
-					}
+					return nil, 0, false
 				}
 			}
 
 			runeCount++
-			return MatcherResult{
-				Token:      nil,
-				Err:        nil,
-				Precedence: 0,
-			}
+			return nil, 0, true
 		}
 	}
 }
