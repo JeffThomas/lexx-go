@@ -1,28 +1,18 @@
 package matchers
 
 import (
-	"errors"
 	"unicode"
 )
 
-func StartWhitespaceMatcher() func(r rune, currentText *string) MatcherResult {
+func StartWhitespaceMatcher() LexxMatcherMatch {
 	length := 0
 	lines := 0
-	return func(r rune, currentText *string) MatcherResult {
-
+	return func(r rune, currentText []rune) (token *Token, precedence int8, run bool) {
 		if r == 0 {
-			if len(*currentText) > 0 {
-				return MatcherResult{
-					Token:      &Token{Type: WHITESPACE, Value: *currentText + "", Line: lines, Column: length},
-					Err:        nil,
-					Precedence: 0,
-				}
+			if length > 0 {
+				return &Token{Type: WHITESPACE, Value: string(currentText), Line: lines, Column: length}, 0, false
 			} else {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not whitespace"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 		}
 
@@ -32,23 +22,11 @@ func StartWhitespaceMatcher() func(r rune, currentText *string) MatcherResult {
 				lines++
 				length = 0
 			}
-			return MatcherResult{
-				Token:      nil,
-				Err:        nil,
-				Precedence: 0,
-			}
-		} else if len(*currentText) == 0 {
-			return MatcherResult{
-				Token:      nil,
-				Err:        errors.New("not whitespace"),
-				Precedence: 0,
-			}
+			return nil, 0, true
+		} else if lines == 0 && length == 0 {
+			return nil, 0, false
 		} else {
-			return MatcherResult{
-				Token:      &Token{Type: WHITESPACE, Value: *currentText + "", Line: lines, Column: length},
-				Err:        nil,
-				Precedence: 0,
-			}
+			return &Token{Type: WHITESPACE, Value: string(currentText), Line: lines, Column: length}, 1, false
 		}
 	}
 }
