@@ -1,49 +1,28 @@
 package matchers
 
 import (
-	"errors"
 	"unicode"
 )
 
-func StartIntegerMatcher() func(r rune, currentText *string) MatcherResult {
+func StartIntegerMatcher() LexxMatcherMatch {
 	length := 0
-	return func(r rune, currentText *string) MatcherResult {
+	return func(r rune, currentText []rune) (token *Token, precedence int8, run bool) {
 
 		if r == 0 {
-			if len(*currentText) > 0 {
-				return MatcherResult{
-					Token:      &Token{Type: INTEGER, Value: *currentText + "", Column: length},
-					Err:        nil,
-					Precedence: 0,
-				}
+			if length > 0 {
+				return &Token{Type: INTEGER, Value: string(currentText), Column: length}, 0, false
 			} else {
-				return MatcherResult{
-					Token:      nil,
-					Err:        errors.New("not an integer"),
-					Precedence: 0,
-				}
+				return nil, 0, false
 			}
 		}
 
 		if unicode.IsDigit(r) {
 			length++
-			return MatcherResult{
-				Token:      nil,
-				Err:        nil,
-				Precedence: 0,
-			}
-		} else if len(*currentText) == 0 {
-			return MatcherResult{
-				Token:      nil,
-				Err:        errors.New("not an integer"),
-				Precedence: 0,
-			}
+			return nil, 0, true
+		} else if length == 0 {
+			return nil, 0, false
 		} else {
-			return MatcherResult{
-				Token:      &Token{Type: INTEGER, Value: *currentText + "", Column: length},
-				Err:        nil,
-				Precedence: 0,
-			}
+			return &Token{Type: INTEGER, Value: string(currentText), Column: length}, 0, false
 		}
 	}
 }
